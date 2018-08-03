@@ -13,6 +13,6 @@ resource "digitalocean_droplet" "k8s_node" {
   count     = "${var.count}"
   size      = "${var.primary_size}"
   region    = "${var.region}"
-  ssh_keys  = ["${var.ssh_key_fingerprint}"]
+  ssh_keys  = "${var.ssh_key_fingerprints}"
   user_data = "${data.template_file.node.rendered}"
 }

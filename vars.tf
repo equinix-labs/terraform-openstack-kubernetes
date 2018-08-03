@@ -27,6 +27,7 @@ variable "count" {
   description = "Number of nodes."
 }
 
-variable "ssh_key_fingerprint" {
-  description = "Your DO public ssh key fingerprint"
+variable "ssh_key_fingerprints" {
+  description = "Your DO public ssh key fingerprints"
+  type = "list"
 }

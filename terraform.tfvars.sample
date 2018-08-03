@@ -1,0 +1,3 @@
+digitalocean_token = "digitalocean_rw_api_key"
+
+ssh_key_fingerprint = ["key:fingerprint1","key:fingerprint2"]

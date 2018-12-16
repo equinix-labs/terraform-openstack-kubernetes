@@ -29,5 +29,5 @@ variable "count" {
 
 variable "ssh_key_fingerprints" {
   description = "Your DO public ssh key fingerprints"
-  type = "list"
+  type        = "list"
 }

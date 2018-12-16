@@ -2,7 +2,7 @@ data "template_file" "node" {
   template = "${file("${path.module}/node.tpl")}"
 
   vars {
-    kube_token = "${random_string.kube_init_token_a.result}.${random_string.kube_init_token_b.result}"
+    kube_token      = "${random_string.kube_init_token_a.result}.${random_string.kube_init_token_b.result}"
     primary_node_ip = "${digitalocean_droplet.k8s_primary.ipv4_address}"
   }
 }

@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    endpoint                    = "nyc3.digitaloceanspaces.com"
+    endpoint                    = "sfo2.digitaloceanspaces.com"
     region                      = "us-west-1"
     key                         = "terraform.tfstate"
     skip_requesting_account_id  = true

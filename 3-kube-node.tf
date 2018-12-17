@@ -4,6 +4,7 @@ data "template_file" "node" {
   vars {
     kube_token      = "${random_string.kube_init_token_a.result}.${random_string.kube_init_token_b.result}"
     primary_node_ip = "${digitalocean_droplet.k8s_primary.ipv4_address}"
+    kube_version    = "${var.kubernetes_version}"
   }
 }
 
@@ -13,6 +14,7 @@ resource "digitalocean_droplet" "k8s_node" {
   count     = "${var.count}"
   size      = "${var.primary_size}"
   region    = "${var.region}"
+  private_networking = "true"
   ssh_keys  = "${var.ssh_key_fingerprints}"
   user_data = "${data.template_file.node.rendered}"
 }

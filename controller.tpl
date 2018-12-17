@@ -29,13 +29,13 @@ function define_ccm {
 	cd /root/kube && \
 	wget "https://raw.githubusercontent.com/digitalocean/digitalocean-cloud-controller-manager/master/releases/v${ccm_version}.yml" && \
 	cat << EOF > /root/kube/0-ccm.yaml
-	apiVersion: v1
-	kind: Secret
-	metadata:
-	  name: digitalocean
-	  namespace: kube-system
-	stringData:
-	  access-token: "${do_token}"
+apiVersion: v1
+kind: Secret
+metadata:
+  name: digitalocean
+  namespace: kube-system
+stringData:
+  access-token: "${do_token}"
 EOF
 }
 

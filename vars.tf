@@ -29,5 +29,15 @@ variable "count" {
 
 variable "ssh_key_fingerprints" {
   description = "Your DO public ssh key fingerprints"
-  type = "list"
+  type        = "list"
+}
+
+variable "digitalocean_ccm_release" {
+  description = "Version of DigitalOcean Cloud Controller Manager to run (https://github.com/digitalocean/digitalocean-cloud-controller-manager/tree/master/releases)"
+  default     = "0.1.8"
+}
+
+variable "kubernetes_version" {
+  description = "Version of Kubeadm to install"
+  default     = "1.12.3-00"
 }

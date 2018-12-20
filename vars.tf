@@ -41,3 +41,8 @@ variable "kubernetes_version" {
   description = "Version of Kubeadm to install"
   default     = "1.12.3-00"
 }
+
+variable "secrets_encryption" {
+  description = "Enable at-rest Secrets encryption"
+  default     = "no"
+}

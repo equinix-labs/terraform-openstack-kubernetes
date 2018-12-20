@@ -9,12 +9,12 @@ data "template_file" "node" {
 }
 
 resource "digitalocean_droplet" "k8s_node" {
-  name      = "${format("${var.cluster_name}-node-%02d", count.index)}"
-  image     = "ubuntu-16-04-x64"
-  count     = "${var.count}"
-  size      = "${var.primary_size}"
-  region    = "${var.region}"
+  name               = "${format("${var.cluster_name}-node-%02d", count.index)}"
+  image              = "ubuntu-16-04-x64"
+  count              = "${var.count}"
+  size               = "${var.primary_size}"
+  region             = "${var.region}"
   private_networking = "true"
-  ssh_keys  = "${var.ssh_key_fingerprints}"
-  user_data = "${data.template_file.node.rendered}"
+  ssh_keys           = "${var.ssh_key_fingerprints}"
+  user_data          = "${data.template_file.node.rendered}"
 }

@@ -1,17 +1,9 @@
-terraform {
-  backend "s3" {
-    endpoint                    = "sfo2.digitaloceanspaces.com"
-    region                      = "us-west-1"
-    key                         = "terraform.tfstate"
-    skip_requesting_account_id  = true
-    skip_credentials_validation = true
-    skip_get_ec2_platforms      = true
-    skip_metadata_api_check     = true
-  }
-}
-
-provider "digitalocean" {
-  token = "${var.digitalocean_token}"
+provider "openstack" {
+  user_name   = "${var.user_name}"
+  tenant_name = "${var.tenant_name}"
+  password    = "${var.password}"
+  auth_url    = "${var.auth_url}"
+  region      = "${var.region}"
 }
 
 resource "random_string" "kube_init_token_a" {

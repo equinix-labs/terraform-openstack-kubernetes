@@ -1,25 +1,49 @@
-variable "digitalocean_token" {
-  description = "Your DigitalOcean API key"
-}
+var "user_name" {
+  description = "OpenStack Username"
+}   
+var "tenant_name" {
+  description = "OpenStack Project"
+} 
+
+var "password" {
+  description = "OpenStack Password"
+}  
+
+var "auth_url" {
+  description = "OpenStack Auth URL (v2)" 
+}  
+
+var "region" {
+  description = "OpenStack Region"
+}    
 
 variable "region" {
-  description = "DigitalOcean Region"
-  default     = "TOR1"
+  description = "OpenStack Region"
+  default     = "sjc1"
 }
 
-variable "node_size" {
-  description = "K8s Agent Droplet Size"
-  default     = "4GB"
+variable "image_id" {
+  description = "Openstack Image"
 }
 
-variable "primary_size" {
-  description = "K8s Primary Droplet Size"
-  default     = "4GB"
+variable "flavor_id_node" {
+  description = "OpenStack Flavor for Nodes"
 }
 
+variable "flavor_id_controller" {
+  description = "OpenStack Flavor for Controller"
+}
+
+variable "network_id" {
+  description = "OpenStack Network ID"
+}
+
+variable "lb_subnet_id" {
+  description = "OpenStack LB Subnet ID"
+}
 variable "cluster_name" {
   description = "Name of your cluster. Alpha-numeric and hyphens only, please."
-  default     = "digitalocean-k8s"
+  default     = "openstack-k8s"
 }
 
 variable "count" {
@@ -27,9 +51,8 @@ variable "count" {
   description = "Number of nodes."
 }
 
-variable "ssh_key_fingerprints" {
-  description = "Your DO public ssh key fingerprints"
-  type        = "list"
+variable "ssh_key_name" {
+  description = "Your public ssh key name"
 }
 
 variable "digitalocean_ccm_release" {

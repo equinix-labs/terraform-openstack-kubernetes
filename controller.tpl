@@ -27,22 +27,6 @@ function init_cluster {
     kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl --kubeconfig=/etc/kubernetes/admin.conf version | base64 | tr -d '\n')"
 }
 
-function define_ccm {
-  echo "Generating DigitalOcean Cloud Controller Manager configuration..." && \
-	mkdir /root/kube && \
-	cd /root/kube && \
-	wget "https://raw.githubusercontent.com/digitalocean/digitalocean-cloud-controller-manager/master/releases/v${ccm_version}.yml" && \
-	cat << EOF > /root/kube/0-ccm.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: digitalocean
-  namespace: kube-system
-stringData:
-  access-token: "${do_token}"
-EOF
-}
-
 function gen_encryption_config {
   echo "Generating EncryptionConfig for cluster..." && \
   export BASE64_STRING=$(head -c 32 /dev/urandom | base64) && \
@@ -60,6 +44,25 @@ resources:
 EOF
 }
 
+function gen_openstack_cloud_conf {
+  echo "Generating cloud.conf..." && \
+  export AUTH_URL = $(echo ${auth_url} | sed -e 's|\/v2|\/v3|g')
+  cat << EOF > /etc/kubernetes/cloud.conf
+[Global]
+username=${user_name}
+tenant-id=${tenant_id}
+password=${password}
+auth-url=$AUTH_URL
+[LoadBalancer]
+subnet-id=${lb_subnet_id}
+floating-network-id=${floating_network_id}
+lb-method=ROUND_ROBIN
+lb-provider=amphora
+[BlockStorage]
+bs-version=auto
+EOF
+}
+
 function modify_encryption_config {
 #Validate Encrypted Secret:
 # ETCDCTL_API=3 etcdctl --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" --c
@@ -68,6 +71,23 @@ acert="/etc/kubernetes/pki/etcd/ca.crt" get /registry/secrets/default/personal-s
   sed -i 's|- kube-apiserver|- kube-apiserver\n    - --experimental-encryption-provider-config=/etc/kubernetes/secrets.conf|g' /etc/kubernetes/manifests/kube-apiserver.yaml && \
   sed -i 's|  volumes:|  volumes:\n  - hostPath:\n      path: /etc/kubernetes/secrets.conf\n      type: FileOrCreate\n    name: secretconfig|g' /etc/kubernetes/manifests/kube-apiserver.yaml  && \
   sed -i 's|    volumeMounts:|    volumeMounts:\n    - mountPath: /etc/kubernetes/secrets.conf\n      name: secretconfig\n      readOnly: true|g' /etc/kubernetes/manifests/kube-apiserver.yaml 
+}
+
+function configure_openstack_cloud_config {
+  echo "Updating Kube APIServer Configuration for OpenStack Cloud Configuration..." && \
+  sed -i 's|- kube-apiserver|- kube-apiserver\n    - --cloud-config=/etc/kubernetes/cloud.conf|g' /etc/kubernetes/manifests/kube-apiserver.yaml && \
+  sed -i 's|- kube-apiserver|- kube-apiserver\n    - --cloud-provider=openstack|g' /etc/kubernetes/manifests/kube-apiserver.yaml && \
+  sed -i 's|  volumes:|  volumes:\n  - hostPath:\n      path: /etc/kubernetes/cloud.conf\n      type: FileOrCreate\n    name: oscloudconfig|g' /etc/kubernetes/manifests/kube-apiserver.yaml  && \
+  sed -i 's|    volumeMounts:|    volumeMounts:\n    - mountPath: /etc/kubernetes/cloud.conf\n      name: oscloudconfig\n      readOnly: true|g' /etc/kubernetes/manifests/kube-apiserver.yaml && \
+  echo "Updating Kube Controller Manager Configuration for OpenStack Cloud Configuration..." && \
+  sed -i 's|- kube-controller-manager|- kube-controller-manager\n    - --cloud-config=/etc/kubernetes/cloud.conf|g' /etc/kubernetes/manifests/kube-controller-manager.yaml && \
+  sed -i 's|- kube-controller-manager|- kube-controller-manager\n    - --cloud-provider=openstack|g' /etc/kubernetes/manifests/kube-controller-manager.yaml && \
+  sed -i 's|  volumes:|  volumes:\n  - hostPath:\n      path: /etc/kubernetes/cloud.conf\n      type: FileOrCreate\n    name: oscloudconfig|g' /etc/kubernetes/manifests/kube-controller-manager.yaml  && \
+  sed -i 's|    volumeMounts:|    volumeMounts:\n    - mountPath: /etc/kubernetes/cloud.conf\n      name: oscloudconfig\n      readOnly: true|g' /etc/kubernetes/manifests/kube-controller-manager.yaml && \
+  echo "Update Kubelet config..."
+  sed -i 's|Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"|Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cloud-provider=openstack --cloud-config=/etc/kubernetes.cloud.conf"|g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf && \
+  systemctl daemon-reload && \
+  systemctl restart kubelet
 }
 
 function apply_workloads {
@@ -80,7 +100,8 @@ install_docker && \
 install_kube_tools && \
 sleep 30 && \
 init_cluster && \
-define_ccm && \
+gen_openstack_cloud_conf && \
+configure_openstack_cloud_config && \
 sleep 180 && \
 apply_workloads && \
 if [ "${secrets_encryption}" = "yes" ]; then

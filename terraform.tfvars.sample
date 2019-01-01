@@ -1,3 +1,18 @@
-digitalocean_token = "digitalocean_rw_api_key"
+#OpenStack Provider
+user_name   = ""
+tenant_name = ""
+password    = ""
+#OpenStack Keystone v2 Endpoint
+auth_url    = ""
+region      = "sjc1"
 
-ssh_key_fingerprints = ["key:fingerprint1","key:fingerprint2"]
+#Instance & Cluster Details
+ssh_key_name = ""
+image_id = ""
+flavor_id_controller = ""
+flavor_id_node = ""
+floating_network_id =  ""
+network_id = ""
+lb_subnet_id = ""
+count = "5"
+secrets_encryption = "no"

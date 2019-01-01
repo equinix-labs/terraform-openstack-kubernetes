@@ -1,21 +1,22 @@
 var "user_name" {
   description = "OpenStack Username"
-}   
+}
+
 var "tenant_name" {
   description = "OpenStack Project"
-} 
+}
 
 var "password" {
   description = "OpenStack Password"
-}  
+}
 
 var "auth_url" {
-  description = "OpenStack Auth URL (v2)" 
-}  
+  description = "OpenStack Auth URL (v2)"
+}
 
 var "region" {
   description = "OpenStack Region"
-}    
+}
 
 variable "region" {
   description = "OpenStack Region"
@@ -41,6 +42,7 @@ variable "network_id" {
 variable "lb_subnet_id" {
   description = "OpenStack LB Subnet ID"
 }
+
 variable "cluster_name" {
   description = "Name of your cluster. Alpha-numeric and hyphens only, please."
   default     = "openstack-k8s"

@@ -30,8 +30,8 @@ variable "flavor_id_controller" {
   description = "OpenStack Flavor for Controller"
 }
 
-variable "network_id" {
-  description = "OpenStack Network ID for nodes"
+variable "network_name" {
+  description = "OpenStack Network name (i.e. private_network) for nodes"
 }
 
 

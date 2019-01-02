@@ -3,7 +3,7 @@ data "template_file" "node" {
 
   vars {
     kube_token          = "${random_string.kube_init_token_a.result}.${random_string.kube_init_token_b.result}"
-    primary_node_ip     = "${digitalocean_droplet.k8s_primary.ipv4_address}"
+    primary_node_ip     = "${openstack_compute_instance_v2.k8s_primary.network.0.fixed_ip_v4}"
     kube_version        = "${var.kubernetes_version}"
     user_name           = "${var.user_name}"
     tenant_name         = "${var.tenant_name}"
@@ -14,7 +14,7 @@ data "template_file" "node" {
   }
 }
 
-resource "openstack_compute_instance_v2" "k8s_primary" {
+resource "openstack_compute_instance_v2" "k8s_node" {
   name            = "${format("${var.cluster_name}-node-%02d", count.index)}"
   image_id        = "${var.image_id}"
   count           = "${var.count}"
@@ -24,17 +24,6 @@ resource "openstack_compute_instance_v2" "k8s_primary" {
   user_data       = "${data.template_file.node.rendered}"
 
   network {
-    name = "${var.network_id}"
+    name = "${var.network_name}"
   }
-}
-
-resource "digitalocean_droplet" "k8s_node" {
-  name               = "${format("${var.cluster_name}-node-%02d", count.index)}"
-  image              = "ubuntu-16-04-x64"
-  count              = "${var.count}"
-  size               = "${var.primary_size}"
-  region             = "${var.region}"
-  private_networking = "true"
-  ssh_keys           = "${var.ssh_key_fingerprints}"
-  user_data          = "${data.template_file.node.rendered}"
 }

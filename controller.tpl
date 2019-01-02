@@ -50,7 +50,7 @@ function gen_openstack_cloud_conf {
   cat << EOF > /etc/kubernetes/cloud.conf
 [Global]
 username=${user_name}
-tenant-id=${tenant_id}
+tenant-id=${tenant_name}
 password=${password}
 auth-url=$AUTH_URL
 [LoadBalancer]

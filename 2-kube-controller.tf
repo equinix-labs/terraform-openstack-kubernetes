@@ -23,6 +23,6 @@ resource "openstack_compute_instance_v2" "k8s_primary" {
   user_data       = "${data.template_file.controller.rendered}"
 
   network {
-    name = "${var.network_id}"
+    name = "${var.network_name}"
   }
 }

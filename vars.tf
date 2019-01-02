@@ -1,26 +1,21 @@
-var "user_name" {
+variable "user_name" {
   description = "OpenStack Username"
 }
 
-var "tenant_name" {
+variable "tenant_name" {
   description = "OpenStack Project"
 }
 
-var "password" {
+variable "password" {
   description = "OpenStack Password"
 }
 
-var "auth_url" {
+variable "auth_url" {
   description = "OpenStack Auth URL (v2)"
-}
-
-var "region" {
-  description = "OpenStack Region"
 }
 
 variable "region" {
   description = "OpenStack Region"
-  default     = "sjc1"
 }
 
 variable "image_id" {
@@ -36,7 +31,12 @@ variable "flavor_id_controller" {
 }
 
 variable "network_id" {
-  description = "OpenStack Network ID"
+  description = "OpenStack Network ID for nodes"
+}
+
+
+variable "floating_network_id" {
+  description = "OpenStack Network ID for Floating IP pool"
 }
 
 variable "lb_subnet_id" {

@@ -34,7 +34,9 @@ variable "network_name" {
   description = "OpenStack Network name (i.e. private_network) for nodes"
 }
 
-
+variable "floating_network_pool_name" {
+  description = "OpenStack name of Floating IP pool. (i.e. public)"
+}
 variable "floating_network_id" {
   description = "OpenStack Network ID for Floating IP pool"
 }

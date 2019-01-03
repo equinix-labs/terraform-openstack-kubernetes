@@ -26,3 +26,12 @@ resource "openstack_compute_instance_v2" "k8s_primary" {
     name = "${var.network_name}"
   }
 }
+
+resource "openstack_networking_floatingip_v2" "controller_fip" {
+  pool = "${var.floating_network_pool_name}"
+}
+
+resource "openstack_compute_floatingip_associate_v2" "controller_fip" {
+  floating_ip = "${openstack_networking_floatingip_v2.controller_fip.address}"
+  instance_id = "${openstack_compute_instance_v2.k8s_primary.id}"
+}
